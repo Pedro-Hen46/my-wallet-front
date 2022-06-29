@@ -1,34 +1,58 @@
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import React from "react";
+import axios from "axios";
+import { Grid } from "react-loader-spinner";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
+
+  //================= VARIAVEIS DE AMBIENTE - BACKEND ====================//
+  const LOGIN_POST_URL = "http://localhost:5000/register";
 
   //================= VARIAVEIS DE ESTADO ====================//
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [confirmPassword, setconfirmPassword] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
 
   //================= INICIO DAS FUNÇÕES ====================//
   function Register(event) {
     event.preventDefault();
 
-    if(password !== confirmPassword){
-        return window.alert('As senhas estão diferentes, tente novamente.');
+    if (password !== confirmPassword) {
+      return window.alert("As senhas estão diferentes, tente novamente.");
     }
     if (
       name !== "" &&
       email !== "" &&
       password !== "" &&
-      confirmPassword === password
+      confirmPassword === password &&
+      password.length >= 6
     ) {
+      const promise = axios.post(LOGIN_POST_URL, {
+        name: name,
+        email: email,
+        password: password,
+      });
+
+      setLoading(true);
+
+      promise.then((response) => {
         window.alert("Ok, usuario cadastrado com sucesso.");
-        navigate('/')
-    } 
-    else {
-        window.alert('Por favor preencha os dados de forma correta e tente novamente');
+        navigate("/");
+        setLoading(false);
+      });
+      promise.catch((error) => {
+        window.alert(error.response.data);
+        setLoading(false);
+      });
+    } else {
+      window.alert(
+        "O(s) campo(s) esta(o) vazios entre com os dados para efetuar o login"
+      );
+      setLoading(false);
     }
   }
 
@@ -60,7 +84,13 @@ export default function RegisterPage() {
           placeholder="Confirme a senha"
           type="password"
         ></input>
-        <button>Cadastrar</button>
+        {loading ? (
+          <Loading>
+            <Grid width="60px" color="#FFFFFF" />
+          </Loading>
+        ) : (
+          <button>Cadastrar</button>
+        )}
       </form>
 
       <span onClick={() => goToLoginPage()}>
@@ -69,6 +99,12 @@ export default function RegisterPage() {
     </Container>
   );
 }
+const Loading = styled.div`
+  display: flex;
+  justify-content: center;
+
+  margin-top: 5px;
+`;
 
 const Container = styled.div`
   width: 100%;

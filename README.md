@@ -1,2 +1,1 @@
-Aplication FullStac My-wallet using React.JS - NodeJS - MongoDB.
-
+Application FullStack My-wallet using React.JS - NodeJS - MongoDB.
