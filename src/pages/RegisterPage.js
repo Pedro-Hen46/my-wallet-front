@@ -48,7 +48,7 @@ export default function RegisterPage() {
         window.alert(error.response.data);
         setLoading(false);
       });
-    } else {
+    } else if (name === "" || email === "" || password === "") {
       window.alert(
         "O(s) campo(s) esta(o) vazios entre com os dados para efetuar o login"
       );

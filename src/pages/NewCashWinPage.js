@@ -1,21 +1,66 @@
+import { useUserLogged } from "../contexts/UserLoggedProvider";
+
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import axios from "axios";
 import styled from "styled-components";
 
 export default function NewCashWinPage() {
   const navigate = useNavigate();
+  const { saveDataUser } = useUserLogged();
 
-   //================= INICIO DAS FUNÇÕES ====================//
-  function saveWinMongo() {
-    window.alert("Entrada salva com sucesso!");
-    navigate("/home");
+  //=========== VARIAVEIS DE CONTROLE - BACK-END ============//
+  const DATAUSER_POST_URL = "http://localhost:5000/transactions";
+
+  //================= VARIAVEIS DE ESTADO ====================//
+  const [value, setValue] = useState(0);
+  const [description, setDescription] = useState("");
+
+  //================= INICIO DAS FUNÇÕES ====================//
+
+  function saveWinMongo(event) {
+    event.preventDefault();
+
+    if (value !== 0 || description !== "") {
+      const gainScript = {
+        value: value,
+        description: description,
+        type: "gain",
+      };
+
+      const promise = axios.post(DATAUSER_POST_URL, gainScript, {
+        ...saveDataUser.config,
+      });
+
+      promise.then((response) => {
+        window.alert("Entrada salva com sucesso!");
+        navigate("/home");
+      });
+      promise.catch((error) => {
+        console.log(error.response.data)
+        window.alert("Erro no sistema, tente novamente mais tarde.");
+      });
+    } else {
+      window.alert(
+        "O(s) campo(s) esta(o) vazios entre com os dados da Entrada!"
+      );
+    }
   }
 
   return (
     <Container>
       <h3>Nova entrada</h3>
-      <form>
-        <input placeholder="Valor"></input>
-        <input placeholder="Descrição"></input>
+      <form onSubmit={(event) => saveWinMongo(event)}>
+        <input
+          onChange={(e) => setValue(e.target.value)}
+          type="number"
+          placeholder="Valor"
+        ></input>
+        <input
+          onChange={(e) => setDescription(e.target.value)}
+          type="text"
+          placeholder="Descrição"
+        ></input>
         <button>Salvar entrada</button>
       </form>
     </Container>
@@ -45,13 +90,13 @@ const Container = styled.div`
     box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
     transition: linear 0.2s;
 
-    :hover{
+    :hover {
       box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.6);
       cursor: pointer;
       font-weight: 600;
     }
   }
-  
+
   form {
     width: 100%;
     display: flex;

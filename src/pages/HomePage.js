@@ -1,31 +1,59 @@
 import { useNavigate } from "react-router-dom";
+import { useUserLogged } from "../contexts/UserLoggedProvider";
+import { useEffect, useState } from "react";
+
 import styled from "styled-components";
+import axios from "axios";
+
+import Transactions from "../components/Transactions";
 
 export default function HomePage() {
   const navigate = useNavigate();
+  const { saveDataUser } = useUserLogged();
+  console.log(saveDataUser.config);
 
-   //================= INICIO DAS FUNÇÕES ====================//
+  //=========== VARIAVEIS DE CONTROLE - BACK-END ============//
+  const DATAUSER_GET_URL = "http://localhost:5000/transactions";
+
+  //================= VARIAVEIS DE ESTADO ====================//
+  const [transactions, setTransactions] = useState([]);
+  //================= INICIO DAS FUNÇÕES ====================//
+  useEffect(() => {
+    const promise = axios.get(DATAUSER_GET_URL, { ...saveDataUser.config });
+
+    promise.then((response) => {
+      setTransactions(response.data);
+    });
+    promise.catch((error) => {
+      console.log(error.response.data);
+    });
+  }, [saveDataUser.config]);
+
   function appLogout() {
-    if (window.confirm("Tem certeza que deseja sair do aplicativo ?")) {
-      navigate("/");
-    }
+    if (window.confirm("Tem certeza que deseja sair do aplicativo ?"))
+      return navigate("/");
   }
-  function goToCashWin(){
+  function goToCashWin() {
     navigate("/newcashwin");
   }
-  function goToCashLoss(){
+  function goToCashLoss() {
     navigate("/newcashloss");
   }
+  console.log(transactions);
 
   return (
     <Container>
       <Header>
-        <h3>Olá, Fulano</h3>
+        <h3>Olá, {saveDataUser.username}</h3>
         <ion-icon name="log-out-outline" onClick={() => appLogout()}></ion-icon>
       </Header>
 
       <ExtratoFinanceiro>
-        <h6>Não há registos de entrada ou saída</h6>
+        {transactions.length === 0 ? (
+          <h6>Não há registos de entrada ou saída</h6>
+        ) : (
+          transactions.map( (item, index) => <Transactions key={index} data={item} /> )
+        )}
       </ExtratoFinanceiro>
 
       <ButtonsContainer>
@@ -33,7 +61,7 @@ export default function HomePage() {
           <ion-icon name="add-circle-outline"></ion-icon>
           <h5>Nova entrada</h5>
         </div>
-        <div  onClick={() => goToCashLoss()}>
+        <div onClick={() => goToCashLoss()}>
           <ion-icon name="remove-circle-outline"></ion-icon>
           <h5>Nova saída</h5>
         </div>
@@ -68,7 +96,6 @@ const ButtonsContainer = styled.div`
   align-items: center;
   justify-content: center;
   padding-left: 2px;
-  
 
   div {
     background-color: #a328d6;
@@ -82,7 +109,7 @@ const ButtonsContainer = styled.div`
     color: #ffffff;
     font-weight: 500;
     box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.1);
-    
+
     h5 {
       font-size: 22px;
       font-weight: 500;
@@ -91,26 +118,24 @@ const ButtonsContainer = styled.div`
       position: absolute;
       bottom: 0;
       left: 6%;
-      
     }
 
     ion-icon {
-      color: #FFFFFF;
+      color: #ffffff;
       font-size: 38px;
     }
     transition: linear 0.3s;
-    :hover{
-        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.4);
-        cursor: pointer;
-        transition: linear 0.3s;
-       
+    :hover {
+      box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.4);
+      cursor: pointer;
+      transition: linear 0.3s;
     }
   }
 `;
 
 const ExtratoFinanceiro = styled.div`
   width: 80%;
-  height: 50%;
+  height: 65%;
   background-color: #ffffff;
   border-radius: 6px;
   padding: 20px;
@@ -129,9 +154,8 @@ const ExtratoFinanceiro = styled.div`
   }
 
   transition: linear 0.3s;
-  :hover{
+  :hover {
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.6);
-    cursor: pointer;
   }
 `;
 

@@ -1,11 +1,14 @@
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
 import React from "react";
 import axios from "axios";
+
+import { useUserLogged } from "../contexts/UserLoggedProvider";
+import { useNavigate } from "react-router-dom";
 import { Grid } from "react-loader-spinner";
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { saveDataUserLogged } = useUserLogged();
   //================= VARIAVEIS DE AMBIENTE - BACKEND ====================//
   const LOGIN_POST_URL = "http://localhost:5000/login";
 
@@ -25,6 +28,14 @@ export default function LoginPage() {
       });
       setLoading(true);
       promise.then((response) => {
+      
+        const config = {
+          headers: {
+            Authorization: `Bearer ${response.data.token}`,
+          },
+        };
+      
+        saveDataUserLogged({ ...response.data, config });
         navigate("/home");
         setLoading(false);
       });
@@ -32,7 +43,7 @@ export default function LoginPage() {
         window.alert("Usuario ou senha incorretos, tente novamente...");
         setLoading(false);
       });
-    } else{
+    } else {
       window.alert(
         "O(s) campo(s) esta(o) vazios entre com os dados para efetuar o login"
       );
