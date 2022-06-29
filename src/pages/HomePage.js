@@ -10,7 +10,6 @@ import Transactions from "../components/Transactions";
 export default function HomePage() {
   const navigate = useNavigate();
   const { saveDataUser } = useUserLogged();
-  console.log(saveDataUser.config);
 
   //=========== VARIAVEIS DE CONTROLE - BACK-END ============//
   const DATAUSER_GET_URL = "http://localhost:5000/transactions";
@@ -39,7 +38,11 @@ export default function HomePage() {
   function goToCashLoss() {
     navigate("/newcashloss");
   }
-  console.log(transactions);
+  let Total = 0;
+  transactions.map((item) => {
+    return Total +=  Number(item.value);
+  });
+  console.log(Total)
 
   return (
     <Container>
@@ -52,8 +55,13 @@ export default function HomePage() {
         {transactions.length === 0 ? (
           <h6>Não há registos de entrada ou saída</h6>
         ) : (
-          transactions.map( (item, index) => <Transactions key={index} data={item} /> )
+          transactions.map((item, index) => (
+            <Transactions key={index} data={item} />
+          ))
         )}
+        <FooterExtrato valor={Total}>
+          <span>SALDO TOTAL: </span> <h2>{Total.toFixed(2)?.replace('.', ',')} R$</h2>
+        </FooterExtrato>
       </ExtratoFinanceiro>
 
       <ButtonsContainer>
@@ -69,6 +77,65 @@ export default function HomePage() {
     </Container>
   );
 }
+const FooterExtrato = styled.div`
+  width: 100%;
+  height: 45px;
+  position: relative;
+  bottom: 0;
+  left: 0;
+  background-color: #a328d6;
+  border-radius: 10px;
+
+  box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
+  
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  span {
+    color: #FFFFFF;
+    font-weight: 300;
+    font-size: 18px;
+    letter-spacing: 5px;
+    margin-right: 10px;
+  }
+  h2{
+    color: ${props => (props.valor > 0 ? "#0fff00" : "#ff0000")};
+    font-weight:900;
+    font-size: 26px;
+  }
+
+`;
+
+const ExtratoFinanceiro = styled.div`
+  width: 80%;
+  height: 65%;
+  background-color: #ffffff;
+  border-radius: 6px;
+  padding: 10px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: scroll;
+  overflow-x: hidden;
+
+  h6 {
+    font-family: "Raleway";
+    font-weight: 100;
+    font-size: 22px;
+    color: #868686;
+  }
+
+  transition: linear 0.3s;
+  :hover {
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.6);
+  }
+`;
+
 const Header = styled.div`
   display: flex;
   align-items: center;
@@ -130,32 +197,6 @@ const ButtonsContainer = styled.div`
       cursor: pointer;
       transition: linear 0.3s;
     }
-  }
-`;
-
-const ExtratoFinanceiro = styled.div`
-  width: 80%;
-  height: 65%;
-  background-color: #ffffff;
-  border-radius: 6px;
-  padding: 20px;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
-
-  h6 {
-    font-family: "Raleway";
-    font-weight: 100;
-    font-size: 22px;
-    color: #868686;
-  }
-
-  transition: linear 0.3s;
-  :hover {
-    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.6);
   }
 `;
 
