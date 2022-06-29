@@ -4,6 +4,7 @@ import styled from "styled-components";
 export default function NewCashLossPage() {
   const navigate = useNavigate();
 
+   //================= INICIO DAS FUNÇÕES ====================//
   function saveLossMongo() {
     window.alert("Saída salva com sucesso!");
     navigate("/home");

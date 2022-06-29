@@ -4,6 +4,7 @@ import styled from "styled-components";
 export default function NewCashWinPage() {
   const navigate = useNavigate();
 
+   //================= INICIO DAS FUNÇÕES ====================//
   function saveWinMongo() {
     window.alert("Entrada salva com sucesso!");
     navigate("/home");

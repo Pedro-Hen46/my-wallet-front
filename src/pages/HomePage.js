@@ -4,6 +4,7 @@ import styled from "styled-components";
 export default function HomePage() {
   const navigate = useNavigate();
 
+   //================= INICIO DAS FUNÇÕES ====================//
   function appLogout() {
     if (window.confirm("Tem certeza que deseja sair do aplicativo ?")) {
       navigate("/");
