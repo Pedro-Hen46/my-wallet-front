@@ -23,7 +23,7 @@ export default function NewCashLossPage() {
   function saveLossToApi(event) {
     event.preventDefault();
 
-    if (value !== 0 || description !== "") {
+    if (value !== 0 && description !== "") {
       const lossScript = {
         value:  value < 0 ? value : -value,
         description: description,
