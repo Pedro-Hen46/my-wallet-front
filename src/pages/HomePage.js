@@ -13,7 +13,8 @@ export default function HomePage() {
   const { saveDataUser } = useUserLogged();
 
   //=========== VARIAVEIS DE CONTROLE - BACK-END ============//
-  const DATAUSER_GET_URL = "https://my-wallet-fullstack.herokuapp.com/transactions";
+  const DATAUSER_GET_URL =
+    "https://my-wallet-fullstack.herokuapp.com/transactions";
 
   //================= VARIAVEIS DE ESTADO ====================//
   const [transactions, setTransactions] = useState([]);
@@ -76,10 +77,14 @@ export default function HomePage() {
             )}
           </ExtratoFinanceiro>
           <ShowMoney>
-            <FooterExtrato valor={Total}>
-              <span>SALDO TOTAL: </span>{" "}
-              <h2>{Total.toFixed(2)?.replace(".", ",")} R$</h2>
-            </FooterExtrato>
+            {transactions.length === 0 ? (
+              ""
+            ) : (
+              <FooterExtrato valor={Total}>
+                <span>SALDO TOTAL: </span>{" "}
+                <h2>{Total.toFixed(2)?.replace(".", ",")} R$</h2>
+              </FooterExtrato>
+            )}
           </ShowMoney>
 
           <ButtonsContainer>
@@ -107,8 +112,8 @@ const Loading = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  h4{
-    color: #FFFFFF !important;
+  h4 {
+    color: #ffffff !important;
     font-weight: 200;
   }
 `;
@@ -165,7 +170,7 @@ const ExtratoFinanceiro = styled.div`
 
   h6 {
     font-family: "Raleway";
-    margin-top: 45%;
+    margin-top: 26%;
     font-weight: 100;
     font-size: 22px;
     color: #868686;
