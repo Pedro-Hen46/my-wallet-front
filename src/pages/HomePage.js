@@ -140,7 +140,7 @@ const FooterExtrato = styled.div`
     margin-right: 10px;
   }
   h2 {
-    color: ${(props) => (props.valor >= 0 ? "#0fff00" : "#ff0000")};
+    color: ${(props) => (props.valor >= 0 ? "#03AC00" : "#ff0000")};
     font-weight: 700;
     font-size: 26px;
     font-family: "Raleway";
@@ -165,6 +165,7 @@ const ExtratoFinanceiro = styled.div`
 
   h6 {
     font-family: "Raleway";
+    margin-top: 45%;
     font-weight: 100;
     font-size: 22px;
     color: #868686;

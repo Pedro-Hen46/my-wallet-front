@@ -20,6 +20,8 @@ export default function RegisterPage() {
   //================= INICIO DAS FUNÇÕES ====================//
   function Register(event) {
     event.preventDefault();
+    
+    if(password.length < 6) return window.alert('Por favor a senha precisa conter pelo menos 6 caracteres, tente outra.')
 
     if (password !== confirmPassword) {
       return window.alert("As senhas estão diferentes, tente novamente.");

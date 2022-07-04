@@ -1,14 +1,14 @@
 import styled from "styled-components";
 
 export default function Transactions({ data }) {
-  console.log(data);
+  console.log(data)
     const dateTransation = data.date?.replace('.', '/');
   return (
     <Container color={data.type}>
       <h4>{dateTransation}</h4>
-      <h1>{data.description}</h1>
+      <h1 onClick={() => window.alert('Em processo de desenvolvimento...')}>{data.description}</h1>
       <h2>{Number(data.value).toFixed(2)?.replace('.', ',')} R$</h2>
-      <ion-icon name="close"></ion-icon>
+      <ion-icon name="close" onClick={() => window.alert('Em processo de desenvolvimento...')}></ion-icon>
     </Container>
   );
 }
@@ -52,7 +52,7 @@ height: auto;
     }
   }
   h2{
-    color: ${props => (props.color === 'loss' ? `#ff0000` : `#00ff00`)};
+    color: ${props => (props.color === 'loss' ? `#ff0000` : `#03AC00`)};
     position: absolute;
     right: 30px;
     font-weight: 600;
