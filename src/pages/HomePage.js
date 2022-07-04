@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useUserLogged } from "../contexts/UserLoggedProvider";
 import { useEffect, useState } from "react";
+import { Circles } from "react-loader-spinner";
 
 import styled from "styled-components";
 import axios from "axios";
@@ -12,19 +13,23 @@ export default function HomePage() {
   const { saveDataUser } = useUserLogged();
 
   //=========== VARIAVEIS DE CONTROLE - BACK-END ============//
-  const DATAUSER_GET_URL = "http://localhost:5000/transactions";
+  const DATAUSER_GET_URL = "https://my-wallet-fullstack.herokuapp.com/transactions";
 
   //================= VARIAVEIS DE ESTADO ====================//
   const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   //================= INICIO DAS FUNÇÕES ====================//
   useEffect(() => {
     const promise = axios.get(DATAUSER_GET_URL, { ...saveDataUser.config });
-
+    setLoading(true);
     promise.then((response) => {
       setTransactions(response.data);
+      setLoading(false);
     });
     promise.catch((error) => {
       console.log(error.response.data);
+      setLoading(false);
     });
   }, [saveDataUser.config]);
 
@@ -40,71 +45,106 @@ export default function HomePage() {
   }
   let Total = 0;
   transactions.map((item) => {
-    return Total +=  Number(item.value);
+    return (Total += Number(item.value));
   });
-  console.log(Total)
+  console.log(Total);
 
   return (
-    <Container>
-      <Header>
-        <h3>Olá, {saveDataUser.username}</h3>
-        <ion-icon name="log-out-outline" onClick={() => appLogout()}></ion-icon>
-      </Header>
+    <>
+      {loading ? (
+        <Loading>
+          <Circles width="60px" color="#FFFFFF" />
+          <h4>Aguarde, estou carregando os dados...</h4>
+        </Loading>
+      ) : (
+        <Container>
+          <Header>
+            <h3>Olá, {saveDataUser.username}</h3>
+            <ion-icon
+              name="log-out-outline"
+              onClick={() => appLogout()}
+            ></ion-icon>
+          </Header>
 
-      <ExtratoFinanceiro>
-        {transactions.length === 0 ? (
-          <h6>Não há registos de entrada ou saída</h6>
-        ) : (
-          transactions.map((item, index) => (
-            <Transactions key={index} data={item} />
-          ))
-        )}
-        <FooterExtrato valor={Total}>
-          <span>SALDO TOTAL: </span> <h2>{Total.toFixed(2)?.replace('.', ',')} R$</h2>
-        </FooterExtrato>
-      </ExtratoFinanceiro>
+          <ExtratoFinanceiro>
+            {transactions.length === 0 ? (
+              <h6>Não há registos de entrada ou saída</h6>
+            ) : (
+              transactions.map((item, index) => (
+                <Transactions key={index} data={item} />
+              ))
+            )}
+          </ExtratoFinanceiro>
+          <ShowMoney>
+            <FooterExtrato valor={Total}>
+              <span>SALDO TOTAL: </span>{" "}
+              <h2>{Total.toFixed(2)?.replace(".", ",")} R$</h2>
+            </FooterExtrato>
+          </ShowMoney>
 
-      <ButtonsContainer>
-        <div onClick={() => goToCashWin()}>
-          <ion-icon name="add-circle-outline"></ion-icon>
-          <h5>Nova entrada</h5>
-        </div>
-        <div onClick={() => goToCashLoss()}>
-          <ion-icon name="remove-circle-outline"></ion-icon>
-          <h5>Nova saída</h5>
-        </div>
-      </ButtonsContainer>
-    </Container>
+          <ButtonsContainer>
+            <div onClick={() => goToCashWin()}>
+              <ion-icon name="add-circle-outline"></ion-icon>
+              <h5>Nova entrada</h5>
+            </div>
+            <div onClick={() => goToCashLoss()}>
+              <ion-icon name="remove-circle-outline"></ion-icon>
+              <h5>Nova saída</h5>
+            </div>
+          </ButtonsContainer>
+        </Container>
+      )}
+    </>
   );
 }
+
+//=========== STYLED COMPONENTS ============//
+
+const Loading = styled.div`
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  h4{
+    color: #FFFFFF !important;
+    font-weight: 200;
+  }
+`;
+
+const ShowMoney = styled.div`
+  background-color: white;
+  width: 80%;
+  height: 40px;
+  margin-top: -5px;
+  z-index: 1;
+`;
+
 const FooterExtrato = styled.div`
   width: 100%;
   height: 45px;
   position: relative;
   bottom: 0;
   left: 0;
-  background-color: #a328d6;
   border-radius: 10px;
-
-  box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
-  
 
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-around;
   span {
-    color: #FFFFFF;
+    color: #000000;
     font-weight: 300;
     font-size: 18px;
-    letter-spacing: 5px;
+    letter-spacing: 2px;
     margin-right: 10px;
   }
-  h2{
-    color: ${props => (props.valor > 0 ? "#0fff00" : "#ff0000")};
-    font-weight:900;
+  h2 {
+    color: ${(props) => (props.valor >= 0 ? "#0fff00" : "#ff0000")};
+    font-weight: 700;
     font-size: 26px;
+    font-family: "Raleway";
   }
-
 `;
 
 const ExtratoFinanceiro = styled.div`

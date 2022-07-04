@@ -2,13 +2,13 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import React from "react";
 import axios from "axios";
-import { Grid } from "react-loader-spinner";
+import { Circles } from "react-loader-spinner";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
 
   //================= VARIAVEIS DE AMBIENTE - BACKEND ====================//
-  const LOGIN_POST_URL = "http://localhost:5000/register";
+  const LOGIN_POST_URL = "https://my-wallet-fullstack.herokuapp.com/register";
 
   //================= VARIAVEIS DE ESTADO ====================//
   const [name, setName] = React.useState("");
@@ -86,7 +86,7 @@ export default function RegisterPage() {
         ></input>
         {loading ? (
           <Loading>
-            <Grid width="60px" color="#FFFFFF" />
+            <Circles width="60px" color="#FFFFFF" />
           </Loading>
         ) : (
           <button>Cadastrar</button>

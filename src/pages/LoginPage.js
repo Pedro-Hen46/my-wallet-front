@@ -4,13 +4,13 @@ import axios from "axios";
 
 import { useUserLogged } from "../contexts/UserLoggedProvider";
 import { useNavigate } from "react-router-dom";
-import { Grid } from "react-loader-spinner";
+import { Circles } from "react-loader-spinner";
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const { saveDataUserLogged } = useUserLogged();
   //================= VARIAVEIS DE AMBIENTE - BACKEND ====================//
-  const LOGIN_POST_URL = "http://localhost:5000/login";
+  const LOGIN_POST_URL = "https://my-wallet-fullstack.herokuapp.com/login";
 
   //================= VARIAVEIS DE ESTADO ====================//
   const [email, setEmail] = React.useState("");
@@ -70,7 +70,7 @@ export default function LoginPage() {
         ></input>
         {loading ? (
           <Loading>
-            <Grid width="60px" color="#FFFFFF" />
+            <Circles width="60px" color="#FFFFFF" />
           </Loading>
         ) : (
           <button>ENTRAR</button>

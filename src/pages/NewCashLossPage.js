@@ -1,7 +1,8 @@
 import { useUserLogged } from "../contexts/UserLoggedProvider";
-
+import { Circles } from "react-loader-spinner";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+
 import axios from "axios";
 import styled from "styled-components";
 
@@ -10,11 +11,12 @@ export default function NewCashLossPage() {
   const { saveDataUser } = useUserLogged();
 
   //=========== VARIAVEIS DE CONTROLE - BACK-END ============//
-  const DATAUSER_POST_URL = "http://localhost:5000/transactions";
+  const DATAUSER_POST_URL = "https://my-wallet-fullstack.herokuapp.com/transactions";
 
   //================= VARIAVEIS DE ESTADO ====================//
   const [value, setValue] = useState(0);
   const [description, setDescription] = useState("");
+  const [loading, setLoading] = useState(false);
 
   //================= INICIO DAS FUNÇÕES ====================//
 
@@ -23,7 +25,7 @@ export default function NewCashLossPage() {
 
     if (value !== 0 || description !== "") {
       const lossScript = {
-        value: -value,
+        value:  value < 0 ? value : -value,
         description: description,
         type: "loss",
       };
@@ -31,42 +33,65 @@ export default function NewCashLossPage() {
       const promise = axios.post(DATAUSER_POST_URL, lossScript, {
         ...saveDataUser.config,
       });
+      setLoading(true);
 
       promise.then((response) => {
-        window.alert("Saída salva com sucesso!");
+        setLoading(false);
         navigate("/home");
       });
       promise.catch((error) => {
-        console.log(error.response.data)
+        console.log(error.response.data);
         window.alert("MEU DEUS! Erro no sistema!! tente novamente mais tarde.");
+        setLoading(false);
       });
     } else {
-      window.alert(
-        "O(s) campo(s) esta(o) vazios entre com os dados da Saída!"
-      );
+      window.alert("O(s) campo(s) esta(o) vazios entre com os dados da Saída!");
     }
   }
 
   return (
-    <Container>
-      <h3>Nova saída</h3>
-      <form onSubmit={(event) => saveLossToApi(event)}>
-        <input
-          onChange={(e) => setValue(e.target.value)}
-          type="number"
-          placeholder="Valor"
-        ></input>
-        <input
-          onChange={(e) => setDescription(e.target.value)}
-          type="text"
-          placeholder="Descrição"
-        ></input>
-        <button>Salvar saída</button>
-      </form>
-    </Container>
+    <>
+      {loading ? (
+        <Loading>
+          <Circles width="60px" color="#FFFFFF" />
+          <h4>Enviando a sua Saída, aguarde um momento</h4>
+        </Loading>
+      ) : (
+        <Container>
+          <h3>Nova saída</h3>
+          <form onSubmit={(event) => saveLossToApi(event)}>
+            <input
+              onChange={(e) => setValue(e.target.value)}
+              type="number"
+              placeholder="Entre com o valor da saída "
+            ></input>
+            <input
+              onChange={(e) => setDescription(e.target.value)}
+              type="text"
+              placeholder="Descrição"
+            ></input>
+            <button>Salvar saída</button>
+          </form>
+        </Container>
+      )}
+    </>
   );
 }
 
+//=========== STYLED COMPONENTS ============//
+
+const Loading = styled.div`
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  h4{
+    color: #FFFFFF !important;
+    font-weight: 200;
+  }
+`;
 const Container = styled.div`
   width: 100%;
   height: 100vh;
